@@ -27,4 +27,20 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
             WHERE ts.template_id = :templateId
             """, nativeQuery = true)
     List<Question> findAllByTemplatedId(long templateId);
+
+    @Query(value = """
+            SELECT new reviewme.question.repository.QuestionAnswerDto(q, a)
+            FROM (
+                SELECT sq.questionId AS id
+                FROM SectionQuestion sq
+                JOIN Section s ON s.id = sq.sectionId
+                WHERE s.id = :sectionId
+            ) AS filtered_questions
+            JOIN Question q ON q.id = filtered_questions.id
+            LEFT JOIN Answer a ON a.questionId = q.id
+            JOIN Review r ON r.id = a.reviewId
+            JOIN ReviewGroup rg ON rg.id = r.reviewGroupId
+            WHERE rg.reviewRequestCode = :reviewRequestCode
+            """)
+    List<QuestionAnswerDto> findReceivedAnswersGroupedByQuestion(String reviewRequestCode, long sectionId);
 }
