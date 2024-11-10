@@ -1,4 +1,4 @@
-package reviewme.config;
+package reviewme.config.datasource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,4 +54,3 @@ public class ReplicationDatasourceConfig {
         return new LazyConnectionDataSourceProxy(routingDataSource);
     }
 }
-
