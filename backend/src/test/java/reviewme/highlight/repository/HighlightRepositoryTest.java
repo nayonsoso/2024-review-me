@@ -17,6 +17,24 @@ class HighlightRepositoryTest {
     private HighlightRepository highlightRepository;
 
     @Test
+    void 한_번에_여러_하이라이트를_벌크_삽입한다() {
+        // given
+        List<Highlight> highlights = List.of(
+                new Highlight(1L, 1, new HighlightRange(1, 2)),
+                new Highlight(1L, 1, new HighlightRange(3, 5))
+        );
+
+        // when
+        highlightRepository.saveAll(highlights);
+
+        // then
+        List<Highlight> actual = highlightRepository.findAllByAnswerIdsOrderedAsc(List.of(1L));
+        assertThat(actual)
+                .extracting(Highlight::getHighlightRange)
+                .containsExactly(new HighlightRange(1, 2), new HighlightRange(3, 5));
+    }
+
+    @Test
     void 하이라이트를_줄번호_시작_인덱스_순서대로_정렬해서_가져온다() {
         // given
         highlightRepository.saveAll(
