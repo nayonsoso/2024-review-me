@@ -78,7 +78,8 @@ export const colors: ThemeProperty<CSSProperties['color']> = {
 
 export const zIndex: ThemeProperty<CSSProperties['zIndex']> = {
   main: 1,
-  dropdown: 998,
+  dropdown: 997,
+  topbar: 998,
   modal: 999,
 };
 
