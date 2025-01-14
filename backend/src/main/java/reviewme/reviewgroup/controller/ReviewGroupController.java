@@ -35,6 +35,7 @@ public class ReviewGroupController {
     public ResponseEntity<ReviewGroupCreationResponse> createReviewGroup(
             @Valid @RequestBody ReviewGroupCreationRequest request
     ) {
+        // 회원 세션 추후 추가해야 함
         ReviewGroupCreationResponse response = reviewGroupService.createReviewGroup(request);
         return ResponseEntity.ok(response);
     }
