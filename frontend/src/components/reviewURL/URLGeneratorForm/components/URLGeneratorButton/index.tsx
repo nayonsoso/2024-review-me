@@ -1,10 +1,11 @@
 import { DataForReviewRequestCode } from '@/apis/group';
 import { Button } from '@/components';
 import { HOM_EVENT_NAME } from '@/constants';
+import { debounce, trackEventInAmplitude } from '@/utils';
+
 import usePostDataForReviewRequestCode, {
   UsePostDataForReviewRequestCodeProps,
-} from '@/pages/HomePage/hooks/usePostDataForReviewRequestCode';
-import { debounce, trackEventInAmplitude } from '@/utils';
+} from '../../hooks/usePostDataForReviewRequestCode';
 
 const DEBOUNCE_TIME = 300;
 
@@ -29,7 +30,7 @@ const URLGeneratorButton = ({
     });
   };
 
-  const handleUrlCreationButtonClick = debounce((event: React.MouseEvent<HTMLElement>) => {
+  const handleURLCreationButtonClick = debounce((event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
     postDataForURL();
   }, DEBOUNCE_TIME);
@@ -38,7 +39,7 @@ const URLGeneratorButton = ({
     <Button
       type="button"
       styleType={isFormValid && !mutation.isPending ? 'primary' : 'disabled'}
-      onClick={handleUrlCreationButtonClick}
+      onClick={handleURLCreationButtonClick}
       disabled={!isFormValid && !mutation.isPending}
     >
       {mutation.isPending ? '리뷰 링크 생성 중...' : '리뷰 링크 생성하기'}

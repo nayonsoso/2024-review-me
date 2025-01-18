@@ -1,5 +1,4 @@
-import ReviewCard from '@/components/common/ReviewCard';
-import { URLGeneratorForm } from '@/pages/HomePage/components';
+import { URLGeneratorForm, ReviewCard } from '@/components';
 
 import ReviewLinkLayout from '../layouts/ReviewLinkLayout';
 
