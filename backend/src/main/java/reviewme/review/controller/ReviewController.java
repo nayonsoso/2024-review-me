@@ -50,13 +50,13 @@ public class ReviewController {
         return ResponseEntity.created(URI.create("/reviews/" + savedReviewId)).build();
     }
 
-    @GetMapping("/v2/reviews/received")
+    @GetMapping("/v2/groups/{reviewGroupId}/reviews/received")
     public ResponseEntity<ReceivedReviewPageResponse> findReceivedReviews(
+            @PathVariable long reviewGroupId,
             @RequestParam(required = false) Long lastReviewId,
-            @RequestParam(required = false) Integer size,
-            @ReviewGroupSession ReviewGroup reviewGroup
+            @RequestParam(required = false) Integer size
     ) {
-        ReceivedReviewPageResponse response = reviewListLookupService.getReceivedReviews(lastReviewId, size, reviewGroup);
+        ReceivedReviewPageResponse response = reviewListLookupService.getReceivedReviews(reviewGroupId, lastReviewId, size);
         return ResponseEntity.ok(response);
     }
 
@@ -69,21 +69,21 @@ public class ReviewController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/v2/reviews/summary")
+    @GetMapping("/v2/groups/{reviewGroupId}/reviews/summary")
     public ResponseEntity<ReceivedReviewsSummaryResponse> findReceivedReviewOverview(
-            @ReviewGroupSession ReviewGroup reviewGroup
+            @PathVariable long reviewGroupId
     ) {
-        ReceivedReviewsSummaryResponse response = reviewSummaryService.getReviewSummary(reviewGroup);
+        ReceivedReviewsSummaryResponse response = reviewSummaryService.getReviewSummary(reviewGroupId);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/v2/reviews/gather")
+    @GetMapping("/v2/groups/{reviewGroupId}/reviews/gather")
     public ResponseEntity<ReviewsGatheredBySectionResponse> getReceivedReviewsBySectionId(
-            @RequestParam("sectionId") long sectionId,
-            @ReviewGroupSession ReviewGroup reviewGroup
+            @PathVariable long reviewGroupId,
+            @RequestParam("sectionId") long sectionId
     ) {
         ReviewsGatheredBySectionResponse response =
-                reviewGatheredLookupService.getReceivedReviewsBySectionId(reviewGroup, sectionId);
+                reviewGatheredLookupService.getReceivedReviewsBySectionId(reviewGroupId, sectionId);
         return ResponseEntity.ok(response);
     }
 

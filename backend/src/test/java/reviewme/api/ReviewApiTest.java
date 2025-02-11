@@ -211,11 +211,15 @@ class ReviewApiTest extends ApiTest {
         );
         ReceivedReviewPageResponse response = new ReceivedReviewPageResponse(
                 "아루3", "리뷰미", 1L, true, receivedReviews);
-        BDDMockito.given(reviewListLookupService.getReceivedReviews(anyLong(), anyInt(), any()))
+        BDDMockito.given(reviewListLookupService.getReceivedReviews(anyLong(), anyLong(), anyInt()))
                 .willReturn(response);
 
         CookieDescriptor[] cookieDescriptors = {
                 cookieWithName("JSESSIONID").description("세션 ID")
+        };
+
+        ParameterDescriptor[] requestPathDescriptors = {
+                parameterWithName("reviewGroupId").description("리뷰 그룹 ID")
         };
 
         ParameterDescriptor[] queryParameter = {
@@ -242,17 +246,19 @@ class ReviewApiTest extends ApiTest {
 
         RestDocumentationResultHandler handler = document(
                 "received-review-list-with-pagination",
+                pathParameters(requestPathDescriptors),
                 requestCookies(cookieDescriptors),
                 queryParameters(queryParameter),
                 responseFields(responseFieldDescriptors)
         );
 
         givenWithSpec().log().all()
+                .pathParam("reviewGroupId", "1")
                 .cookie("JSESSIONID", "ASVNE1VAKDNV4")
                 .queryParam("reviewRequestCode", "hello!!")
                 .queryParam("lastReviewId", "2")
                 .queryParam("size", "5")
-                .when().get("/v2/reviews/received")
+                .when().get("/v2/groups/{reviewGroupId}/reviews/received")
                 .then().log().all()
                 .apply(handler)
                 .statusCode(200);
@@ -260,11 +266,14 @@ class ReviewApiTest extends ApiTest {
 
     @Test
     void 자신이_받은_리뷰의_요약를_조회한다() {
-        BDDMockito.given(reviewSummaryService.getReviewSummary(any()))
+        BDDMockito.given(reviewSummaryService.getReviewSummary(anyLong()))
                 .willReturn(new ReceivedReviewsSummaryResponse("리뷰미", "산초", 5));
 
         CookieDescriptor[] cookieDescriptors = {
                 cookieWithName("JSESSIONID").description("세션 ID")
+        };
+        ParameterDescriptor[] requestPathDescriptors = {
+                parameterWithName("reviewGroupId").description("리뷰 그룹 ID")
         };
 
         FieldDescriptor[] responseFieldDescriptors = {
@@ -275,13 +284,15 @@ class ReviewApiTest extends ApiTest {
 
         RestDocumentationResultHandler handler = document(
                 "received-review-summary",
+                pathParameters(requestPathDescriptors),
                 requestCookies(cookieDescriptors),
                 responseFields(responseFieldDescriptors)
         );
 
         givenWithSpec().log().all()
+                .pathParam("reviewGroupId", "1")
                 .cookie("JSESSIONID", "ABCDEFGHI1234")
-                .when().get("/v2/reviews/summary")
+                .when().get("/v2/groups/{reviewGroupId}/reviews/summary")
                 .then().log().all()
                 .apply(handler)
                 .statusCode(200);
@@ -306,11 +317,14 @@ class ReviewApiTest extends ApiTest {
                                 new VoteResponse("짜장", 3),
                                 new VoteResponse("짬뽕", 5))))
         );
-        BDDMockito.given(reviewGatheredLookupService.getReceivedReviewsBySectionId(any(), anyLong()))
+        BDDMockito.given(reviewGatheredLookupService.getReceivedReviewsBySectionId(anyLong(), anyLong()))
                 .willReturn(response);
 
         CookieDescriptor[] cookieDescriptors = {
                 cookieWithName("JSESSIONID").description("세션 ID")
+        };
+        ParameterDescriptor[] requestPathDescriptors = {
+                parameterWithName("reviewGroupId").description("리뷰 그룹 ID")
         };
         ParameterDescriptor[] queryParameterDescriptors = {
                 parameterWithName("sectionId").description("섹션 ID")
@@ -337,15 +351,17 @@ class ReviewApiTest extends ApiTest {
         };
         RestDocumentationResultHandler handler = document(
                 "received-review-by-section",
+                pathParameters(requestPathDescriptors),
                 requestCookies(cookieDescriptors),
                 queryParameters(queryParameterDescriptors),
                 responseFields(responseFieldDescriptors)
         );
 
         givenWithSpec().log().all()
+                .pathParam("reviewGroupId", "1")
                 .cookie("JSESSIONID", "ABCDEFGHI1234")
                 .queryParam("sectionId", 1)
-                .when().get("/v2/reviews/gather")
+                .when().get("/v2/groups/{reviewGroupId}/reviews/gather")
                 .then().log().all()
                 .apply(handler)
                 .statusCode(200);
