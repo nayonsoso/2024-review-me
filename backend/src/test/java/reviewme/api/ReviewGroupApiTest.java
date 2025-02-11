@@ -3,6 +3,7 @@ package reviewme.api;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
 import static org.springframework.restdocs.cookies.CookieDocumentation.requestCookies;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -30,7 +31,7 @@ class ReviewGroupApiTest extends ApiTest {
 
     @Test
     void 비회원용_리뷰_그룹을_생성한다() {
-        BDDMockito.given(reviewGroupService.createReviewGroup(any(ReviewGroupCreationRequest.class)))
+        BDDMockito.given(reviewGroupService.createReviewGroup(any(ReviewGroupCreationRequest.class), nullable(Long.class)))
                 .willReturn(new ReviewGroupCreationResponse("ABCD1234"));
 
         String request = """
@@ -67,7 +68,7 @@ class ReviewGroupApiTest extends ApiTest {
 
     @Test
     void 회원용_리뷰_그룹을_생성한다() {
-        BDDMockito.given(reviewGroupService.createReviewGroup(any(ReviewGroupCreationRequest.class)))
+        BDDMockito.given(reviewGroupService.createReviewGroup(any(ReviewGroupCreationRequest.class), nullable(Long.class)))
                 .willReturn(new ReviewGroupCreationResponse("ABCD1234"));
 
         CookieDescriptor[] cookieDescriptors = {
@@ -109,7 +110,7 @@ class ReviewGroupApiTest extends ApiTest {
     @Test
     void 리뷰_요청_코드로_회원이_만든_리뷰_그룹_정보를_반환한다() {
         BDDMockito.given(reviewGroupLookupService.getReviewGroupSummary(anyString()))
-                .willReturn(new ReviewGroupResponse(1L,"아루", "리뷰미"));
+                .willReturn(new ReviewGroupResponse(1L, "아루", "리뷰미"));
 
         ParameterDescriptor[] parameterDescriptors = {
                 parameterWithName("reviewRequestCode").description("리뷰 요청 코드")
