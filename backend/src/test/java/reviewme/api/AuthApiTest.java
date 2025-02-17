@@ -1,5 +1,6 @@
 package reviewme.api;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.cookies.CookieDocumentation.cookieWithName;
@@ -69,7 +70,8 @@ public class AuthApiTest extends ApiTest {
                 .when().post("/v2/auth/logout")
                 .then().log().all()
                 .apply(handler)
-                .statusCode(204);
+                .statusCode(204)
+                .header("Set-Cookie", containsString("JSESSIONID=; Path=/; Max-Age=0"));
     }
 
     @Test

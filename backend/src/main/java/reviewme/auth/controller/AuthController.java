@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +42,7 @@ public class AuthController {
             @Valid @RequestBody CheckValidAccessRequest request,
             HttpSession session
     ) {
-        String reviewRequestCode  = authService.authWithReviewGroup(request);
+        String reviewRequestCode = authService.authWithReviewGroup(request);
         sessionManager.saveReviewRequestCode(session, reviewRequestCode);
         return ResponseEntity.noContent().build();
     }
@@ -49,6 +51,20 @@ public class AuthController {
     public ResponseEntity<Void> logout(
             HttpServletRequest httpRequest
     ) {
-        return ResponseEntity.noContent().build();
+        HttpSession session = httpRequest.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        ResponseCookie cookie = ResponseCookie.from("JSESSIONID", "")
+                .path("/")
+                .maxAge(0)
+                .secure(true)
+                .httpOnly(true)
+                .build();
+
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .build();
     }
 }
