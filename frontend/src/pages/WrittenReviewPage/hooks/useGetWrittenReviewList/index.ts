@@ -1,19 +1,15 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 
-import { getReceivedReviewListApi } from '@/apis/review';
+import { getWrittenReviewListApi } from '@/apis/review';
 import { DEFAULT_SIZE_PER_PAGE, REVIEW_QUERY_KEY } from '@/constants';
 
-interface UseGetReviewListProps {
-  reviewRequestCode: string;
-}
-const useGetReviewList = ({ reviewRequestCode }: UseGetReviewListProps) => {
+const useGetWrittenReviewList = () => {
   const { data, ...rest } = useSuspenseInfiniteQuery({
-    queryKey: [REVIEW_QUERY_KEY.reviews],
+    queryKey: [REVIEW_QUERY_KEY.writtenReviewList],
     queryFn: ({ pageParam }) =>
-      getReceivedReviewListApi({
-        lastReviewId: pageParam === 0 ? null : pageParam, // 첫 api 요청 시, null 값 보내기
+      getWrittenReviewListApi({
+        lastReviewId: pageParam === 0 ? null : pageParam, // 첫 요청일 때 null으로 보냄
         size: DEFAULT_SIZE_PER_PAGE,
-        reviewRequestCode,
       }),
 
     initialPageParam: 0,
@@ -25,7 +21,7 @@ const useGetReviewList = ({ reviewRequestCode }: UseGetReviewListProps) => {
   const isLastPage = data.pages[data.pages.length - 1].isLastPage;
   const reviewList = data.pages.flatMap((page) => page.reviews) || [];
 
-  return { isLastPage, reviewList, ...rest };
+  return { reviewList, isLastPage, ...rest };
 };
 
-export default useGetReviewList;
+export default useGetWrittenReviewList;
