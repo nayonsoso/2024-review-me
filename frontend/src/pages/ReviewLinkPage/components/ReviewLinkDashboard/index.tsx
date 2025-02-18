@@ -1,14 +1,31 @@
-import { URLGeneratorForm, ReviewPreview } from '@/components';
+import { useNavigate } from 'react-router';
+
+import { URLGeneratorForm, EmptyContent } from '@/components';
+import { REVIEW_EMPTY, ROUTE } from '@/constants';
+import { useGetReviewLinks } from '@/hooks';
+
 
 import ReviewLinkLayout from '../layouts/ReviewLinkLayout';
+import ReviewLinkItem from '../ReviewLinkItem';
 
 import * as S from './styles';
 
 const ReviewLinkDashboard = () => {
+  const { data: reviewLinks, refetch } = useGetReviewLinks();
+
+  const navigate = useNavigate();
+
+  // 새로운 리뷰 링크가 생성된 후, 최신 데이터를 다시 불러오기 위해 refetch() 실행
+  const refetchReviewLinks = () => refetch();
+
+  const handleReviewLinkItemClick = (reviewRequestCode: string) => {
+    navigate(`/${ROUTE.reviewList}/${reviewRequestCode}`);
+  };
+
   return (
     <S.ReviewLinkDashboardContainer>
       <S.FormSection>
-        <URLGeneratorForm isMember={true} />
+        <URLGeneratorForm isMember={true} refetchReviewLinks={refetchReviewLinks} />
       </S.FormSection>
       <S.Separator />
       <S.LinkSection>
@@ -16,16 +33,23 @@ const ReviewLinkDashboard = () => {
           title="생성한 리뷰 링크를 확인해보세요"
           subTitle="클릭하면 해당 프로젝트의 리뷰 목록으로 이동해요"
         >
-          {/* TODO: 생성한 리뷰 링크가 없을 경우, 돋보기 컴포넌트 추가 */}
-          <ReviewPreview
-            createdAt="2024-01-15"
-            contentPreview="임시용"
-            categories={[
-              { optionId: 2, content: '💡 문제 해결 능력' },
-              { optionId: 1, content: '🗣️ 커뮤니케이션 능력' },
-            ]}
-            handleClick={() => {}}
-          />
+          {reviewLinks.lastReviewGroupId === 0 ? (
+            <EmptyContent iconWidth="15rem" messageFontSize="1.8rem" iconMessageGap="2rem" isBorder={true}>
+              {REVIEW_EMPTY.noReviewLink}
+            </EmptyContent>
+          ) : (
+            reviewLinks.reviewGroups.map((reviewGroup) => (
+              <ReviewLinkItem
+                key={reviewGroup.reviewRequestCode}
+                revieweeName={reviewGroup.revieweeName}
+                projectName={reviewGroup.projectName}
+                createdAt={reviewGroup.createdAt}
+                reviewRequestCode={reviewGroup.reviewRequestCode}
+                reviewCount={reviewGroup.reviewCount}
+                handleClick={() => handleReviewLinkItemClick(reviewGroup.reviewRequestCode)}
+              />
+            ))
+          )}
         </ReviewLinkLayout>
       </S.LinkSection>
     </S.ReviewLinkDashboardContainer>
