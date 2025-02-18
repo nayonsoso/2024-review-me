@@ -247,9 +247,9 @@ class ReviewApiTest extends ApiTest {
                 fieldWithPath("reviews[].createdAt").description("리뷰 작성 날짜"),
                 fieldWithPath("reviews[].contentPreview").description("리뷰 미리보기"),
 
-                fieldWithPath("reviews[].categories[]").description("선택된 카테고리 목록"),
-                fieldWithPath("reviews[].categories[].optionId").description("카테고리 ID"),
-                fieldWithPath("reviews[].categories[].content").description("카테고리 내용")
+                fieldWithPath("reviews[].categoryOptions[]").description("선택된 카테고리 목록"),
+                fieldWithPath("reviews[].categoryOptions[].optionId").description("카테고리 ID"),
+                fieldWithPath("reviews[].categoryOptions[].content").description("카테고리 내용")
         };
 
         RestDocumentationResultHandler handler = document(
@@ -392,7 +392,7 @@ class ReviewApiTest extends ApiTest {
                 new AuthoredReviewElementResponse(2L, "테드2", "리뷰미", LocalDateTime.of(2024, 8, 1, 0, 0), "(리뷰 미리보기 2)",
                         List.of(new SelectedCategoryOptionResponse(2L, "카테고리 2")))
         );
-      
+
         AuthoredReviewsResponse response = new AuthoredReviewsResponse(1L, true, authoredReviews);
         given(reviewListLookupService.getAuthoredReviews(anyLong(), nullable(Long.class), nullable(Integer.class)))
                 .willReturn(response);
@@ -417,9 +417,9 @@ class ReviewApiTest extends ApiTest {
                 fieldWithPath("reviews[].createdAt").description("리뷰 작성 날짜"),
                 fieldWithPath("reviews[].contentPreview").description("리뷰 미리보기"),
 
-                fieldWithPath("reviews[].categories[]").description("선택된 카테고리 목록"),
-                fieldWithPath("reviews[].categories[].optionId").description("카테고리 ID"),
-                fieldWithPath("reviews[].categories[].content").description("카테고리 내용")
+                fieldWithPath("reviews[].categoryOptions[]").description("선택된 카테고리 목록"),
+                fieldWithPath("reviews[].categoryOptions[].optionId").description("카테고리 ID"),
+                fieldWithPath("reviews[].categoryOptions[].content").description("카테고리 내용")
         };
 
         RestDocumentationResultHandler handler = document(
