@@ -5,7 +5,6 @@ import media from '@/utils/media';
 export const LoginForm = styled.div`
   display: flex;
   flex-direction: column;
-
   gap: 2rem;
 `;
 
