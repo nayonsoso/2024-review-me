@@ -16,3 +16,9 @@ export const GROUP_QUERY_KEY = {
   password: 'password',
   reviewGroupData: 'reviewGroupData',
 };
+
+export const OAUTH_QUERY_KEY = {
+  gitHubLogin: 'gitHubLogin',
+  userProfile: 'userProfile',
+  gitHubLogout: 'gitHubLogout',
+};

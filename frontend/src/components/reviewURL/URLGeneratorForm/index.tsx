@@ -1,9 +1,8 @@
 import { useId, useState } from 'react';
 
-import AlertIcon from '@/assets/alertTriangle.svg';
-import { ErrorSuspenseContainer, ReviewZoneURLModal, Toast } from '@/components';
+import { ErrorSuspenseContainer, ReviewZoneURLModal } from '@/components';
 import { ROUTE } from '@/constants/route';
-import { useModals } from '@/hooks';
+import { useModals, useToastContext } from '@/hooks';
 
 import { PasswordField, ReviewGroupDataField, URLGeneratorButton } from './components';
 import useURLGeneratorState from './hooks/useURLGeneratorState';
@@ -13,11 +12,6 @@ const MODAL_KEYS = {
   confirm: 'CONFIRM',
 };
 
-const TOAST_INFORM = {
-  icon: { src: AlertIcon, alt: '' },
-  message: '리뷰 링크 생성에 실패했어요. 다시 시도해 보세요.',
-  duration: 1000 * 3,
-};
 interface URLGeneratorFormProps {
   isMember?: boolean;
   refetchReviewLinks?: () => void;
@@ -28,10 +22,9 @@ const URLGeneratorForm = ({ isMember = false, refetchReviewLinks }: URLGenerator
 
   const [reviewZoneURL, setReviewZoneURL] = useState('');
 
-  const [isOpenToast, setIsOpenToast] = useState(false);
-  const { isOpen, openModal, closeModal } = useModals();
+  const { showToast, hideToast } = useToastContext();
 
-  const handleOpenToast = (isOpen: boolean) => setIsOpenToast(isOpen);
+  const { isOpen, openModal, closeModal } = useModals();
 
   const useInputId = useId();
 
@@ -53,19 +46,17 @@ const URLGeneratorForm = ({ isMember = false, refetchReviewLinks }: URLGenerator
 
     resetForm();
 
-    handleOpenToast(false);
+    hideToast();
     openModal(MODAL_KEYS.confirm);
   };
 
   const handleAPIError = (error: Error) => {
-    console.error(error.message);
-
-    handleOpenToast(true);
+    showToast({ type: 'confirm', message: '리뷰 링크 생성에 실패했어요. 다시 시도해 보세요.' });
     closeModal(MODAL_KEYS.confirm);
   };
 
   return (
-    <S.FormContainer>
+    <>
       <S.URLGeneratorForm>
         <S.Title>함께한 팀원으로부터 리뷰를 받아보세요!</S.Title>
         <S.Fieldset>
@@ -94,19 +85,10 @@ const URLGeneratorForm = ({ isMember = false, refetchReviewLinks }: URLGenerator
           />
         </ErrorSuspenseContainer>
       </S.URLGeneratorForm>
-      {isOpenToast && (
-        <Toast
-          icon={TOAST_INFORM.icon}
-          message={TOAST_INFORM.message}
-          handleOpenModal={handleOpenToast}
-          duration={TOAST_INFORM.duration}
-          position="bottom"
-        />
-      )}
       {isOpen(MODAL_KEYS.confirm) && (
         <ReviewZoneURLModal reviewZoneURL={reviewZoneURL} closeModal={() => closeModal(MODAL_KEYS.confirm)} />
       )}
-    </S.FormContainer>
+    </>
   );
 };
 

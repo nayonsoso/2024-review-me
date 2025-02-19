@@ -6,11 +6,11 @@ import media from '@/utils/media';
 import { ToastPositionType } from '.';
 
 interface ToastModalProps {
-  duration: number;
-  position: ToastPositionType;
+  $animationDurationMS: number;
+  $position: ToastPositionType;
 }
 
-// 위에서 아래로 내려오는 애니메이션
+// position: top - 위에서 아래로 내려오는 애니메이션
 const fadeInDown = keyframes`
   0% {
     opacity: 0;
@@ -22,7 +22,7 @@ const fadeInDown = keyframes`
   }
 `;
 
-// 아래에서 다시 위로 올라가는 애니메이션
+// position: top - 아래에서 다시 위로 올라가는 애니메이션
 const fadeOutUp = keyframes`
   0% {
     opacity: 1;
@@ -34,7 +34,7 @@ const fadeOutUp = keyframes`
   }
 `;
 
-// 아래에서 위로 올라오는 애니메이션
+// position: bottom - 아래에서 위로 올라오는 애니메이션
 const fadeInUp = keyframes`
   0% {
     opacity: 0;
@@ -46,7 +46,7 @@ const fadeInUp = keyframes`
   }
 `;
 
-// 위에서 아래로 내려가는 애니메이션
+// position: bottom - 위에서 아래로 내려가는 애니메이션
 const fadeOutDown = keyframes`
   0% {
     opacity: 1;
@@ -58,29 +58,29 @@ const fadeOutDown = keyframes`
   }
 `;
 
-const getToastPositionStyles = (position: ToastPositionType, duration: number) => {
+const getToastPositionStyles = ($position: ToastPositionType, $animationDurationMS: number) => {
   return css`
-    ${position === 'top' &&
+    ${$position === 'top' &&
     css`
       top: 5%;
       animation:
         ${fadeInDown} 0.5s ease-out forwards,
         ${fadeOutUp} 0.5s ease-out forwards;
-      animation-delay: 0s, ${duration - 0.5}s;
+      animation-delay: 0s, ${$animationDurationMS - 0.5}s;
     `}
 
-    ${position === 'bottom' &&
+    ${$position === 'bottom' &&
     css`
       bottom: 5%;
       animation:
         ${fadeInUp} 0.5s ease-out forwards,
         ${fadeOutDown} 0.5s ease-out forwards;
-      animation-delay: 0s, ${duration - 0.5}s;
+      animation-delay: 0s, ${$animationDurationMS - 0.5}s;
     `}
   `;
 };
 
-export const ToastModalContainer = styled.div<ToastModalProps>`
+export const ToastContainer = styled.div<ToastModalProps>`
   background-color: #626262;
 
   color: white;
@@ -92,7 +92,7 @@ export const ToastModalContainer = styled.div<ToastModalProps>`
 
   position: fixed;
 
-  ${({ position, duration }) => getToastPositionStyles(position, duration)}
+  ${({ $position, $animationDurationMS }) => getToastPositionStyles($position, $animationDurationMS)}
   left: 50%;
   transform: translateX(-50%);
 
@@ -109,11 +109,11 @@ export const ToastModalContainer = styled.div<ToastModalProps>`
   }
 `;
 
-export const WarningIcon = styled.img`
+export const ToastIcon = styled.img`
   width: 2rem;
   height: 2rem;
 `;
 
-export const ErrorMessage = styled.span`
+export const ToastMessage = styled.span`
   white-space: nowrap;
 `;

@@ -14,11 +14,14 @@ import * as S from './styles';
 
 const MODAL_KEYS = {
   content: 'CONTENT_MODAL',
+  login: 'LOGIN_MODAL',
 };
+
 const BUTTON_SIZE = {
   width: '28rem',
   height: '8.5rem',
 };
+
 const IMG_HEIGHT = '15rem';
 
 const ReviewZonePage = () => {
@@ -42,7 +45,7 @@ const ReviewZonePage = () => {
   };
 
   const handleReviewListButtonClick = () => {
-    openModal(MODAL_KEYS.content);
+    openModal(MODAL_KEYS.login);
   };
 
   return (

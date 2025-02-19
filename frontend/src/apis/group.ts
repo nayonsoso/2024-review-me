@@ -22,14 +22,18 @@ export const postDataForReviewRequestCodeApi = async ({
     fetchOptions.credentials = 'include';
   }
 
-  const response = await fetch(endPoint.postingDataForReviewRequestCode, fetchOptions);
+  try {
+    const response = await fetch(endPoint.postingDataForReviewRequestCode, fetchOptions);
 
-  if (!response.ok) {
-    throw new Error(`${createApiErrorMessage(response.status)} ${ERROR_BOUNDARY_IGNORE_ERROR}`);
+    if (!response.ok) {
+      throw new Error(`${createApiErrorMessage(response.status)} ${ERROR_BOUNDARY_IGNORE_ERROR}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error(`${ERROR_BOUNDARY_IGNORE_ERROR} - 리뷰 링크 생성 API 요청 실패`);
   }
-
-  const data = await response.json();
-  return data;
 };
 
 //리뷰 비밀번호

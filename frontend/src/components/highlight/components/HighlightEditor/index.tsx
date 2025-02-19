@@ -16,11 +16,9 @@ import * as S from './style';
 export interface HighlightEditorProps {
   questionId: number;
   answerList: ReviewAnswerResponseData[];
-  handleErrorModal: (isError: boolean) => void;
-  handleModalMessage: (message: string) => void;
 }
 
-const HighlightEditor = ({ questionId, answerList, handleErrorModal, handleModalMessage }: HighlightEditorProps) => {
+const HighlightEditor = ({ questionId, answerList }: HighlightEditorProps) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const { reviewRequestCode } = useRequestCodeParam();
   const { isEditable, handleEditToggleButton } = useEditableState();
@@ -52,8 +50,6 @@ const HighlightEditor = ({ questionId, answerList, handleErrorModal, handleModal
     isEditable,
     resetHighlightMenuPosition,
     updateHighlightMenuPositionByLongPress,
-    handleErrorModal,
-    handleModalMessage,
   });
 
   const { startPressTimer, clearPressTimer } = useLongPress({ handleLongPress: handleLongPressLine });

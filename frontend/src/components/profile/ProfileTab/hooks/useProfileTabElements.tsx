@@ -5,6 +5,8 @@ import LogoutIcon from '@/assets/logout.svg';
 import MenuIcon from '@/assets/menu.svg';
 import OpenedBookIcon from '@/assets/openedBook.svg';
 import UserIcon from '@/assets/user.svg';
+import { ROUTE } from '@/constants';
+import { useOAuthLogout } from '@/hooks/oAuth';
 import { ProfileTabElement, SocialType } from '@/types/profile';
 
 interface UseProfileTabElementsProps {
@@ -14,20 +16,18 @@ interface UseProfileTabElementsProps {
 
 const useProfileTabElements = ({ profileId, socialType }: UseProfileTabElementsProps) => {
   const navigate = useNavigate();
+  const mutation = useOAuthLogout();
 
   const handleReviewLinkControl = () => {
-    // 리뷰 링크 관리 페이지로 이동
-    console.log('리뷰 링크 관리 클릭');
+    navigate(ROUTE.reviewLinks);
   };
 
   const handleCheckWrittenReviews = () => {
-    // 작성한 리뷰 확인 페이지로 이동
-    console.log('작성한 리뷰 확인 클릭');
+    navigate(ROUTE.writtenReview);
   };
 
   const handleLogout = () => {
-    // 로그아웃 로직
-    console.log('로그아웃 클릭');
+    return mutation.mutate();
   };
 
   const profileTabElements: ProfileTabElement[] = [

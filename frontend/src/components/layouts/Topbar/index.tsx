@@ -1,24 +1,30 @@
-import { useLocation } from 'react-router';
-
 import UndraggableWrapper from '@/components/common/UndraggableWrapper';
-import { ROUTE } from '@/constants';
+import ProfileInfo from '@/components/profile/ProfileInfo';
+import { UserProfile } from '@/types/profile';
 
 import Logo from './components/Logo';
 import * as S from './styles';
 
-const Topbar = () => {
-  // TODO: 임시로 true 설정 (로그인 기능 추가하면서 여기도 수정해야 한다.)
-  const isUserLoggedIn = true;
-  const { pathname } = useLocation();
+interface TopbarProps {
+  isUserLoggedIn: boolean;
+  $hideBorderBottom: boolean;
+  userProfile: UserProfile | null;
+}
 
-  const isShowNavigationTab = isUserLoggedIn && !['/', ROUTE.reviewZone].includes(pathname);
-
+const Topbar = ({ isUserLoggedIn, $hideBorderBottom, userProfile }: TopbarProps) => {
   return (
-    <S.Layout $hideBorder={isShowNavigationTab}>
+    <S.Layout $hideBorderBottom={$hideBorderBottom}>
       <S.Container>
         <UndraggableWrapper>
           <Logo />
         </UndraggableWrapper>
+        {isUserLoggedIn && userProfile && (
+          <ProfileInfo
+            profileId={userProfile.nickname}
+            profileImageSrc={userProfile.profileImageUrl}
+            socialType="github"
+          />
+        )}
       </S.Container>
     </S.Layout>
   );

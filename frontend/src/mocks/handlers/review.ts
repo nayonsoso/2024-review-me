@@ -16,7 +16,10 @@ import {
   REVIEW_QUESTION_DATA,
   REVIEW_LIST,
   MOCK_REVIEW_INFO_DATA,
+  bothCookie,
+  nonMemberOnlyCookie,
   reviewLinks,
+  memberOnlyCookie,
 } from '@/mocks/mockData';
 
 import { GROUPED_REVIEWS_MOCK_DATA, GROUPED_SECTION_MOCK_DATA } from '../mockData/reviewCollection';
@@ -41,7 +44,11 @@ const getReviewSummaryInfoData = () => {
   const targetUrl = new RegExp(`^(${nonMemberUrl}|${memberUrl})`);
 
   return http.get(targetUrl, ({ cookies }) => {
-    return authorizeWithCookie(cookies, () => HttpResponse.json(MOCK_REVIEW_INFO_DATA));
+    return authorizeWithCookie({
+      cookies,
+      validateCookieNames: bothCookie,
+      callback: () => HttpResponse.json(MOCK_REVIEW_INFO_DATA),
+    });
   });
 };
 
@@ -61,9 +68,11 @@ const getDetailedReview = () =>
       return HttpResponse.json({ error: '잘못된 상세리뷰 요청' }, { status: 404 });
     };
 
-    // NOTE: 임시로 모킹 핸들러에서 쿠키 검증 제거(로그인 관련 페이지 한정)
-    return handleAPI();
-    //return authorizeWithCookie(cookies, handleAPI);
+    return authorizeWithCookie({
+      cookies,
+      validateCookieNames: bothCookie,
+      callback: handleAPI,
+    });
   });
 
 const getDataToWriteReview = () =>
@@ -87,7 +96,11 @@ const getMemberReceivedReviewList = ({ lastReviewId, size }: GetInfiniteReviewLi
   });
 
   return http.get(memberUrl, ({ request, cookies }) => {
-    return authorizeWithCookie(cookies, () => handleReviewListAPI(request, size));
+    return authorizeWithCookie({
+      cookies,
+      validateCookieNames: memberOnlyCookie,
+      callback: () => handleReviewListAPI(request, size),
+    });
   });
 };
 
@@ -99,11 +112,15 @@ const getNonMemberReceivedReviewList = ({ lastReviewId, size }: GetInfiniteRevie
   });
 
   return http.get(nonMemberUrl, ({ request, cookies }) => {
-    return authorizeWithCookie(cookies, () => handleReviewListAPI(request, size));
+    return authorizeWithCookie({
+      cookies,
+      validateCookieNames: nonMemberOnlyCookie,
+      callback: () => handleReviewListAPI(request, size),
+    });
   });
 };
 
-// 회원-비회원 공통 receivedReviewList API 로직 처리 함수
+// 공통 API 처리 함수
 const handleReviewListAPI = (request: StrictRequest<DefaultBodyType>, size: number) => {
   const url = new URL(request.url);
 
@@ -133,20 +150,29 @@ const postReview = () =>
 
 const getSectionList = () =>
   http.get(endPoint.gettingSectionList, ({ cookies }) => {
-    return authorizeWithCookie(cookies, () => HttpResponse.json(GROUPED_SECTION_MOCK_DATA));
+    return authorizeWithCookie({
+      cookies,
+      validateCookieNames: bothCookie,
+      callback: () => HttpResponse.json(GROUPED_SECTION_MOCK_DATA),
+    });
   });
 
 interface HandleGroupedReviewAPIParams {
   request: StrictRequest<DefaultBodyType>;
   cookies: Record<string, string>;
 }
+
 const handleGroupedReviewsAPI = ({ request, cookies }: HandleGroupedReviewAPIParams) => {
   const url = new URL(request.url);
   const sectionId = url.searchParams.get(REVIEW_GROUP_API_PARAMS.queryString.sectionId);
   const { length } = GROUPED_REVIEWS_MOCK_DATA;
   const index = (Number(sectionId) + length) % length;
 
-  return authorizeWithCookie(cookies, () => HttpResponse.json(GROUPED_REVIEWS_MOCK_DATA[index]));
+  return authorizeWithCookie({
+    cookies,
+    validateCookieNames: bothCookie,
+    callback: () => HttpResponse.json(GROUPED_REVIEWS_MOCK_DATA[index]),
+  });
 };
 
 const getGroupedReviews = (reviewRequestCode: string) => {
@@ -180,15 +206,21 @@ const getWrittenReviewList = ({ lastReviewId, size }: GetInfiniteReviewListApiPa
       });
     };
 
-    // NOTE: 로그인 도입 안정화 전까지 회원 전용 쿠키값 검증 보류
-    return handleAPI();
-    //return authorizeWithCookie(cookies, handleAPI);
+    return authorizeWithCookie({
+      cookies,
+      validateCookieNames: memberOnlyCookie,
+      callback: handleAPI,
+    });
   });
 };
 
 const getReviewLinks = () =>
   http.get(endPoint.gettingReviewLinks, ({ cookies }) => {
-    return authorizeWithCookie(cookies, () => HttpResponse.json(reviewLinks));
+    return authorizeWithCookie({
+      cookies,
+      validateCookieNames: memberOnlyCookie,
+      callback: () => HttpResponse.json(reviewLinks),
+    });
   });
 
 const reviewHandler = [
