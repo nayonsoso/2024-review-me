@@ -58,7 +58,7 @@ class ReviewGroupAuthorizationAspectTest {
             Member member = memberRepository.save(회원());
             ReviewGroup reviewGroup = reviewGroupRepository.save(회원_지정_리뷰_그룹(member.getId()));
             GitHubMember gitHubMember = new GitHubMember(member.getId(), "name", "avatarUrl");
-            sessionManager.saveGitHubMember(session, gitHubMember);
+            sessionManager.saveGitHubMember(request, gitHubMember);
 
             // when & then
             assertThatCode(() -> aopTestClass.testReviewGroupMethod(reviewGroup.getReviewRequestCode()))
@@ -69,7 +69,7 @@ class ReviewGroupAuthorizationAspectTest {
         void 비회원은_자신이_만든_리뷰_그룹에_접근할_수_있다() {
             // given
             ReviewGroup reviewGroup = reviewGroupRepository.save(비회원_리뷰_그룹());
-            sessionManager.saveReviewRequestCode(session, reviewGroup.getReviewRequestCode());
+            sessionManager.saveReviewRequestCode(request, reviewGroup.getReviewRequestCode());
 
             // when & then
             assertThatCode(() -> aopTestClass.testReviewGroupMethod(reviewGroup.getReviewRequestCode()))
@@ -91,9 +91,10 @@ class ReviewGroupAuthorizationAspectTest {
         void 세션이_없으면_Unauthorized_예외가_발생한다() {
             // given
             request.setSession(null);
+            ReviewGroup reviewGroup = reviewGroupRepository.save(비회원_리뷰_그룹());
 
             // when & then
-            assertThatCode(() -> aopTestClass.testReviewGroupMethod("1234"))
+            assertThatCode(() -> aopTestClass.testReviewGroupMethod(reviewGroup.getReviewRequestCode()))
                     .isInstanceOf(ForbiddenReviewGroupAccessException.class);
         }
 
@@ -116,7 +117,7 @@ class ReviewGroupAuthorizationAspectTest {
 
         Member member = memberRepository.save(회원("email123@test.com"));
         GitHubMember gitHubMember = new GitHubMember(member.getId(), "name", "avatarUrl");
-        sessionManager.saveGitHubMember(session, gitHubMember);
+        sessionManager.saveGitHubMember(request, gitHubMember);
 
         // when & then
         assertThatCode(() -> aopTestClass.testReviewGroupMethod(membersReviewGroup.getReviewRequestCode()))
@@ -127,7 +128,7 @@ class ReviewGroupAuthorizationAspectTest {
     void 리뷰_요청_코드가_다른_리뷰_그룹에_접근하면_Unauthorized_예외가_발생한다() {
         // given
         ReviewGroup other = reviewGroupRepository.save(비회원_리뷰_그룹("3333", "4444"));
-        sessionManager.saveReviewRequestCode(session, other.getReviewRequestCode());
+        sessionManager.saveReviewRequestCode(request, other.getReviewRequestCode());
 
         ReviewGroup group = reviewGroupRepository.save(비회원_리뷰_그룹("1111", "2222"));
 

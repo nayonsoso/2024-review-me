@@ -1,6 +1,6 @@
 package reviewme.member.controller;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +19,9 @@ public class MemberController {
 
     @GetMapping("/v2/members/profile")
     public ResponseEntity<ProfileResponse> getProfile(
-            HttpSession session
+            HttpServletRequest request
     ) {
-        GitHubMember gitHubMember = sessionManager.getGitHubMember(session);
+        GitHubMember gitHubMember = sessionManager.getGitHubMember(request);
         ProfileResponse response = memberService.getProfile(gitHubMember);
         return ResponseEntity.ok(response);
     }
