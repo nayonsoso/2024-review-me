@@ -8,7 +8,7 @@ interface UseGetReviewListProps {
 }
 const useGetReviewList = ({ reviewRequestCode }: UseGetReviewListProps) => {
   const { data, ...rest } = useSuspenseInfiniteQuery({
-    queryKey: [REVIEW_QUERY_KEY.reviews],
+    queryKey: [REVIEW_QUERY_KEY.reviews, reviewRequestCode],
     queryFn: ({ pageParam }) =>
       getReceivedReviewListApi({
         lastReviewId: pageParam === 0 ? null : pageParam, // 첫 api 요청 시, null 값 보내기
