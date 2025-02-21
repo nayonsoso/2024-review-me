@@ -49,6 +49,13 @@ class ReviewGroupAuthorizationAspectTest {
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
     }
 
+    @Test
+    void 존재하지_않는_리뷰_그룹에_접근하면_NotFound_예외가_발생한다() {
+        // when & then
+        assertThatCode(() -> aopTestClass.testReviewGroupMethod("notExistsReviewRequestCode"))
+                .isInstanceOf(ReviewGroupNotFoundByReviewRequestCodeException.class);
+    }
+
     @Nested
     class 성공적으로_리뷰_그룹에_접근할_수_있다 {
 
@@ -66,7 +73,7 @@ class ReviewGroupAuthorizationAspectTest {
         }
 
         @Test
-        void 비회원은_자신이_만든_리뷰_그룹에_접근할_수_있다() {
+        void 리뷰_그룹을_인증한_비회원은_리뷰_그룹에_접근할_수_있다() {
             // given
             ReviewGroup reviewGroup = reviewGroupRepository.save(비회원_리뷰_그룹());
             sessionManager.saveReviewRequestCode(request, reviewGroup.getReviewRequestCode());
@@ -75,13 +82,21 @@ class ReviewGroupAuthorizationAspectTest {
             assertThatCode(() -> aopTestClass.testReviewGroupMethod(reviewGroup.getReviewRequestCode()))
                     .doesNotThrowAnyException();
         }
-    }
 
-    @Test
-    void 존재하지_않는_리뷰_그룹에_접근하면_NotFound_예외가_발생한다() {
-        // when & then
-        assertThatCode(() -> aopTestClass.testReviewGroupMethod("notExistsReviewRequestCode"))
-                .isInstanceOf(ReviewGroupNotFoundByReviewRequestCodeException.class);
+        @Test
+        void 리뷰_그룹을_인증한_회원은_리뷰_그룹에_접근할_수_있다() {
+            // given
+            ReviewGroup reviewGroup = reviewGroupRepository.save(비회원_리뷰_그룹());
+            sessionManager.saveReviewRequestCode(request, reviewGroup.getReviewRequestCode());
+
+            Member member = memberRepository.save(회원());
+            GitHubMember gitHubMember = new GitHubMember(member.getId(), "name", "avatarUrl");
+            sessionManager.saveGitHubMember(request, gitHubMember);
+
+            // when & then
+            assertThatCode(() -> aopTestClass.testReviewGroupMethod(reviewGroup.getReviewRequestCode()))
+                    .doesNotThrowAnyException();
+        }
     }
 
     @Nested
