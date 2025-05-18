@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/v2/auth/github")
     public ResponseEntity<ProfileResponse> authWithGitHub(
-            @RequestBody GitHubOAuthRequest request,
+            @Valid @RequestBody GitHubOAuthRequest request,
             HttpServletRequest httpRequest
     ) {
         GitHubMember gitHubMember = authService.authWithGitHub(request);

@@ -4,7 +4,6 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotEmpty;
 
 public record ReviewGroupCreationRequest(
-
         @NotEmpty(message = "리뷰이 이름을 입력해주세요.")
         String revieweeName,
 

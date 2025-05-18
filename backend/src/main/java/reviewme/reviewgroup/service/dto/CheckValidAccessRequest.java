@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
 public record CheckValidAccessRequest(
-
         @NotBlank(message = "리뷰 요청 코드를 입력하세요.")
         String reviewRequestCode,
 

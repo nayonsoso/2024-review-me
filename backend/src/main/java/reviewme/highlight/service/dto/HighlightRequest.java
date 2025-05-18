@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 import reviewme.highlight.service.mapper.HighlightFragment;
 
 public record HighlightRequest(
-
         @NotNull(message = "답변 ID를 입력해주세요.")
         Long answerId,
 
